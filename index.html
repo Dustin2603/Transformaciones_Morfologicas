@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformaciones morfológicas</title>
+    <link rel="stylesheet" href="style.css">
+    <script async src="opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>
+    <script src="image-processing.js" defer></script>
+</head>
+<body>
+    <nav>
+        <h1>Transformaciones morfológicas</h1>
+    </nav>
+    <main>
+        <section class="description">
+            <p>Este proyecto aplica transformaciones morfológicas a imágenes cargadas por el usuario utilizando OpenCV.</p>
+        </section>
+        <section class="upload">
+            <input type="file" accept="image/*" onchange="loadImage(event)">
+        </section>
+        <section id="imageContainer"></section>
+    </main>
+    <img id="uploadedImage" style="display:none;" />
+    <script type="text/javascript">
+        function onOpenCvReady() {
+            document.body.classList.remove('loading');
+        }
+    </script>
+</body>
+</html>
