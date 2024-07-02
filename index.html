@@ -3,29 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transformaciones morfológicas</title>
+    <title>Seleccionar Transformación</title>
     <link rel="stylesheet" href="style.css">
-    <script async src="opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>
-    <script src="image-processing.js" defer></script>
 </head>
 <body>
     <nav>
-        <h1>Transformaciones morfológicas</h1>
+        <h1>Seleccionar Transformación</h1>
     </nav>
     <main>
         <section class="description">
-            <p>Este proyecto aplica transformaciones morfológicas a imágenes cargadas por el usuario utilizando OpenCV.</p>
+            <p>Selecciona el tipo de transformación que deseas aplicar a la imagen.</p>
         </section>
-        <section class="upload">
-            <input type="file" accept="image/*" onchange="loadImage(event)">
+        <section class="options">
+            <button onclick="window.location.href='morpho.html'">Transformaciones Morfológicas</button>
+            <button onclick="window.location.href='hitormiss.html'">Transformación Hit-or-Miss</button>
         </section>
-        <section id="imageContainer"></section>
     </main>
-    <img id="uploadedImage" style="display:none;" />
-    <script type="text/javascript">
-        function onOpenCvReady() {
-            document.body.classList.remove('loading');
-        }
-    </script>
 </body>
 </html>
