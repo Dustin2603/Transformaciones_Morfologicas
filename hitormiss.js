@@ -2,25 +2,37 @@ function loadImage(event) {
     let image = document.getElementById('uploadedImage');
     image.src = URL.createObjectURL(event.target.files[0]);
     image.onload = function () {
-        hitOrMissTransform(image);
+        processImage(image);
     };
 }
 
-function hitOrMissTransform(image) {
+function processImage(image) {
     let src = cv.imread(image);
-    cv.cvtColor(src, src, cv.COLOR_RGBA2GRAY, 0);
-    
-    let thresholded = new cv.Mat();
-    cv.threshold(src, thresholded, 127, 255, cv.THRESH_BINARY);
+    let gray = new cv.Mat();
+    cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
 
+    let binary = new cv.Mat();
+    cv.threshold(gray, binary, 127, 255, cv.THRESH_BINARY);
+
+    let hitOrMissResult = hitOrMissTransform(binary);
+    let matrices = calculateMatrices(gray);
+
+    displayResults(src, gray, binary, hitOrMissResult, matrices);
+
+    src.delete();
+    gray.delete();
+    binary.delete();
+}
+
+function hitOrMissTransform(binary) {
     let hitKernel = cv.matFromArray(3, 3, cv.CV_8U, [0, 1, 0, 1, 1, 1, 0, 1, 0]);
     let missKernel = cv.matFromArray(3, 3, cv.CV_8U, [1, 0, 1, 0, 0, 0, 1, 0, 1]);
 
     let inverted = new cv.Mat();
-    cv.bitwise_not(thresholded, inverted);
+    cv.bitwise_not(binary, inverted);
 
     let erosionHit = new cv.Mat();
-    cv.erode(thresholded, erosionHit, hitKernel);
+    cv.erode(binary, erosionHit, hitKernel);
 
     let erosionMiss = new cv.Mat();
     cv.erode(inverted, erosionMiss, missKernel);
@@ -28,43 +40,39 @@ function hitOrMissTransform(image) {
     let hitOrMiss = new cv.Mat();
     cv.bitwise_and(erosionHit, erosionMiss, hitOrMiss);
 
-    displayHitOrMissImage(thresholded, erosionHit, erosionMiss, hitOrMiss, hitKernel, missKernel);
-
-    src.delete();
-    thresholded.delete();
     hitKernel.delete();
     missKernel.delete();
     inverted.delete();
     erosionHit.delete();
     erosionMiss.delete();
-    hitOrMiss.delete();
+
+    return hitOrMiss;
 }
 
-function displayHitOrMissImage(imagenBinaria, erosionHit, erosionMiss, hitOrMiss, hitKernel, missKernel) {
+function calculateMatrices(gray) {
+    let kernel = cv.Mat.ones(5, 5, cv.CV_8U);
+
+    let eroded = new cv.Mat();
+    let dilated = new cv.Mat();
+    let opened = new cv.Mat();
+    let closed = new cv.Mat();
+
+    cv.erode(gray, eroded, kernel);
+    cv.dilate(gray, dilated, kernel);
+    cv.morphologyEx(gray, opened, cv.MORPH_OPEN, kernel);
+    cv.morphologyEx(gray, closed, cv.MORPH_CLOSE, kernel);
+
+    kernel.delete();
+
+    return { eroded, dilated, opened, closed };
+}
+
+function displayResults(src, gray, binary, hitOrMiss, matrices) {
     let container = document.getElementById('imageContainer');
     container.innerHTML = '';
 
-    // Mostrar Kernel Hit
-    let hitKernelDiv = document.createElement('div');
-    let hitKernelTitle = document.createElement('div');
-    hitKernelTitle.innerText = 'Kernel Hit';
-    let hitKernelCanvas = createKernelCanvas(hitKernel);
-    hitKernelDiv.appendChild(hitKernelTitle);
-    hitKernelDiv.appendChild(hitKernelCanvas);
-    container.appendChild(hitKernelDiv);
-
-    // Mostrar Kernel Miss
-    let missKernelDiv = document.createElement('div');
-    let missKernelTitle = document.createElement('div');
-    missKernelTitle.innerText = 'Kernel Miss';
-    let missKernelCanvas = createKernelCanvas(missKernel);
-    missKernelDiv.appendChild(missKernelTitle);
-    missKernelDiv.appendChild(missKernelCanvas);
-    container.appendChild(missKernelDiv);
-
-    // Mostrar imágenes resultantes
-    let titles = ['Imagen Binaria', 'Erosión Hit', 'Erosión Miss', 'Resultado Hit-or-Miss'];
-    let images = [imagenBinaria, erosionHit, erosionMiss, hitOrMiss];
+    let titles = ['Imagen Original', 'Escala de Grises', 'Imagen Binaria', 'Resultado Hit-or-Miss', 'Erosión', 'Dilatación', 'Apertura', 'Cierre'];
+    let images = [src, gray, binary, hitOrMiss, matrices.eroded, matrices.dilated, matrices.opened, matrices.closed];
 
     for (let i = 0; i < images.length; i++) {
         let div = document.createElement('div');
@@ -78,6 +86,12 @@ function displayHitOrMissImage(imagenBinaria, erosionHit, erosionMiss, hitOrMiss
         div.appendChild(canvas);
         container.appendChild(div);
     }
+
+    hitOrMiss.delete();
+    matrices.eroded.delete();
+    matrices.dilated.delete();
+    matrices.opened.delete();
+    matrices.closed.delete();
 }
 
 function createKernelCanvas(kernel) {
