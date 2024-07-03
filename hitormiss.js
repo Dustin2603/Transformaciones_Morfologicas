@@ -25,8 +25,17 @@ function processImage(image) {
 }
 
 function hitOrMissTransform(binary) {
-    let hitKernel = cv.matFromArray(3, 3, cv.CV_8U, [0, 1, 0, 1, 1, 1, 0, 1, 0]);
-    let missKernel = cv.matFromArray(3, 3, cv.CV_8U, [1, 0, 1, 0, 0, 0, 1, 0, 1]);
+    let hitKernel = cv.matFromArray(3, 3, cv.CV_8U, [
+        0, 1, 0,
+        1, 1, 1,
+        0, 1, 0
+    ]);
+
+    let missKernel = cv.matFromArray(3, 3, cv.CV_8U, [
+        1, 0, 1,
+        0, 0, 0,
+        1, 0, 1
+    ]);
 
     let inverted = new cv.Mat();
     cv.bitwise_not(binary, inverted);
@@ -103,7 +112,6 @@ function createKernelCanvas(kernel) {
     let size = kernel.size();
     let data = kernel.data;
 
-    // Escalar el kernel para que se ajuste al canvas
     let scale = Math.floor(canvas.width / size.width);
 
     for (let y = 0; y < size.height; y++) {
