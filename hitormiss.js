@@ -49,6 +49,10 @@ function hitOrMissTransform(binary) {
     let hitOrMiss = new cv.Mat();
     cv.bitwise_and(erosionHit, erosionMiss, hitOrMiss);
 
+    console.log("erosionHit:", erosionHit.data);
+    console.log("erosionMiss:", erosionMiss.data);
+    console.log("hitOrMiss:", hitOrMiss.data);
+
     hitKernel.delete();
     missKernel.delete();
     inverted.delete();
