@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operaciones Morfológicas Avanzadas</title>
+    <link rel="stylesheet" href="style.css">
+    <script async src="https://docs.opencv.org/4.x/opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>
+    <script src="advanced_morpho.js" defer></script>
+</head>
+<body>
+    <nav>
+        <h1>Operaciones Morfológicas Avanzadas</h1>
+    </nav>
+    <main>
+        <section class="description">
+            <p>Aplica operaciones morfológicas avanzadas a la imagen cargada.</p>
+        </section>
+        <section class="upload">
+            <input type="file" accept="image/*" onchange="loadImage(event)">
+        </section>
+        <section class="options">
+            <button onclick="applyMorphologicalOperation('aislamiento')">Aislamiento Morfológico</button>
+            <button onclick="applyMorphologicalOperation('top_hat')">Top Hat</button>
+            <button onclick="applyMorphologicalOperation('bot_hat')">Bot Hat</button>
+            <button onclick="applyMorphologicalOperation('gradiente por dilatacion')">Gradiente por Dilatación</button>
+            <button onclick="applyMorphologicalOperation('gradiente por erosion')">Gradiente por Erosión</button>
+            <button onclick="applyMorphologicalOperation('gradiente simetrico')">Gradiente Simétrico</button>
+        </section>
+        <section id="imageContainer"></section>
+    </main>
+    <img id="uploadedImage" style="display:none;" />
+    <script type="text/javascript">
+        function onOpenCvReady() {
+            document.body.classList.remove('loading');
+        }
+    </script>
+</body>
+</html>
