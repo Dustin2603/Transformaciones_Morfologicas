@@ -38,7 +38,7 @@ function applyMorphologicalOperation(operation) {
     let result = new cv.Mat();
 
     switch (operation) {
-        case 'isolation':
+        case 'aislamiento':
             // Aislamiento Morfológico
             cv.morphologyEx(gray, result, cv.MORPH_CLOSE, kernel);
             cv.morphologyEx(result, result, cv.MORPH_OPEN, kernel);
@@ -51,21 +51,21 @@ function applyMorphologicalOperation(operation) {
             // Bot Hat
             cv.morphologyEx(gray, result, cv.MORPH_BLACKHAT, kernel);
             break;
-        case 'gradient_dilation':
+        case 'gradiente por dilatacion':
             // Gradiente Morfológico por Dilatación
             let dilated = new cv.Mat();
             cv.dilate(gray, dilated, kernel);
             cv.subtract(dilated, gray, result);
             dilated.delete();
             break;
-        case 'gradient_erosion':
+        case 'gradiente por erosion':
             // Gradiente Morfológico por Erosión
             let eroded = new cv.Mat();
             cv.erode(gray, eroded, kernel);
             cv.subtract(gray, eroded, result);
             eroded.delete();
             break;
-        case 'gradient_symmetric':
+        case 'gradiente simetrico':
             // Gradiente Morfológico Simétrico
             let gradDilated = new cv.Mat();
             let gradEroded = new cv.Mat();
